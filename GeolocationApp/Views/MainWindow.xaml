@@ -1,0 +1,125 @@
+﻿<Window x:Class="GeolocationApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:GeolocationApp.ViewModels"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="GeoLocator" 
+        Height="600" 
+        Width="800"
+        FontFamily="Segoe UI"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0 0 0 16">
+            <materialDesign:PackIcon Kind="Earth" Width="32" Height="32" Margin="0 0 8 0"/>
+            <TextBlock Text="GeoLocator" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <!-- Search Section -->
+        <materialDesign:Card Grid.Row="0" Margin="0 60 0 16" Padding="16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Column="0" 
+                       materialDesign:HintAssist.Hint="Enter IP address or URL"
+                       Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                       Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}"
+                       FontSize="16"
+                       Margin="0 0 8 0"/>
+
+                <Button Grid.Column="1" 
+                      Command="{Binding LookupCommand}"
+                      Style="{StaticResource MaterialDesignRaisedButton}"
+                      ToolTip="Lookup location">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Magnify" Margin="0 0 4 0"/>
+                        <TextBlock Text="Search"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </materialDesign:Card>
+
+        <!-- Results List -->
+        <materialDesign:Card Grid.Row="1" Padding="0">
+            <ListView ItemsSource="{Binding Geolocations}" 
+                    SelectedItem="{Binding SelectedGeolocation}"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                      BorderThickness="0" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,0,367,0">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <materialDesign:Card Margin="8" Padding="16" >
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Location Icon -->
+                                <materialDesign:PackIcon Grid.Column="0" 
+                                                       Kind="MapMarker" 
+                                                       Width="32" 
+                                                       Height="32" 
+                                                       Margin="0 0 16 0"/>
+
+                                <!-- Location Details -->
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="{Binding IP}" FontSize="16" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding City}" FontSize="14"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0 4 0 0">
+                                        <materialDesign:PackIcon Kind="Earth" Width="16" Height="16" Margin="0 0 4 0"/>
+                                        <TextBlock Text="{Binding Country}" FontSize="12" Foreground="#666"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <!-- Coordinates -->
+                                <StackPanel Grid.Column="2" HorizontalAlignment="Right">
+                                    <TextBlock Text="{Binding Latitude, StringFormat='Lat: {0:N4}'}" 
+                                               FontSize="12"
+                                               Foreground="#666"/>
+                                    <TextBlock Text="{Binding Longitude, StringFormat='Lon: {0:N4}'}" 
+                                               FontSize="12"
+                                               Foreground="#666"/>
+                                </StackPanel>
+                            </Grid>
+                        </materialDesign:Card>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </materialDesign:Card>
+
+        <!-- Delete Button -->
+        <Button Grid.Row="2" 
+              Command="{Binding DeleteCommand}"
+              Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+              HorizontalAlignment="Right"
+              Margin="0 16 0 0"
+              ToolTip="Delete selected">
+            <!--Visibility="{Binding SelectedGeolocation, Converter={StaticResource NullToVisibilityConverter}}"-->      
+            <materialDesign:PackIcon Kind="Delete" Width="24" Height="24"/>
+        </Button>
+
+        <!-- Progress Indicator --><!--
+        <ProgressBar Grid.Row="1"
+                   IsIndeterminate="True"
+                   Style="{StaticResource MaterialDesignCircularProgressBar}"
+                   Width="50"
+                   Height="50"
+                   Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"/>-->
+    </Grid>
+</Window>
