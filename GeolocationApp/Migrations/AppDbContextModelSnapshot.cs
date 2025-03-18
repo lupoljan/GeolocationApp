@@ -26,15 +26,11 @@ namespace GeolocationApp.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Continent")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Country")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("IP")
+                    b.Property<string>("IPAddress")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -44,17 +40,13 @@ namespace GeolocationApp.Migrations
                     b.Property<double>("Longitude")
                         .HasColumnType("REAL");
 
-                    b.Property<string>("Region")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IP")
+                    b.HasIndex("IPAddress")
                         .IsUnique();
 
                     b.HasIndex("Url")

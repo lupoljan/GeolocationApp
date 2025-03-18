@@ -16,11 +16,9 @@ namespace GeolocationApp.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    IP = table.Column<string>(type: "TEXT", nullable: false),
+                    IPAddress = table.Column<string>(type: "TEXT", nullable: false),
                     Url = table.Column<string>(type: "TEXT", nullable: false),
-                    Continent = table.Column<string>(type: "TEXT", nullable: false),
                     Country = table.Column<string>(type: "TEXT", nullable: false),
-                    Region = table.Column<string>(type: "TEXT", nullable: false),
                     City = table.Column<string>(type: "TEXT", nullable: false),
                     Latitude = table.Column<double>(type: "REAL", nullable: false),
                     Longitude = table.Column<double>(type: "REAL", nullable: false)
@@ -31,9 +29,9 @@ namespace GeolocationApp.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Geolocations_IP",
+                name: "IX_Geolocations_IPAddress",
                 table: "Geolocations",
-                column: "IP",
+                column: "IPAddress",
                 unique: true);
 
             migrationBuilder.CreateIndex(

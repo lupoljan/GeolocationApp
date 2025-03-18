@@ -77,7 +77,8 @@
 
                                 <!-- Location Details -->
                                 <StackPanel Grid.Column="1">
-                                    <TextBlock Text="{Binding IP}" FontSize="16" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding IPAddress}" FontSize="16" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding Url}" FontSize="16" />
                                     <TextBlock Text="{Binding City}" FontSize="14"/>
                                     <StackPanel Orientation="Horizontal" Margin="0 4 0 0">
                                         <materialDesign:PackIcon Kind="Earth" Width="16" Height="16" Margin="0 0 4 0"/>
@@ -108,18 +109,8 @@
               HorizontalAlignment="Right"
               Margin="0 16 0 0"
               ToolTip="Delete selected">
-            <!--Visibility="{Binding SelectedGeolocation, Converter={StaticResource NullToVisibilityConverter}}"-->      
+            <!--Visibility="{Binding SelectedGeolocation, Converter={StaticResource NullToVisibilityConverter}}"-->
             <materialDesign:PackIcon Kind="Delete" Width="24" Height="24"/>
         </Button>
-
-        <!-- Progress Indicator --><!--
-        <ProgressBar Grid.Row="1"
-                   IsIndeterminate="True"
-                   Style="{StaticResource MaterialDesignCircularProgressBar}"
-                   Width="50"
-                   Height="50"
-                   Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>-->
     </Grid>
 </Window>

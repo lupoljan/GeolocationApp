@@ -29,7 +29,7 @@ namespace GeolocationApp.Models
             await using var context = await _contextFactory.CreateDbContextAsync();
             return await context.Geolocations
                 .AsNoTracking()
-                .FirstOrDefaultAsync(g => g.IP == input || g.Url == input);
+                .FirstOrDefaultAsync(g => g.IPAddress == input || g.Url == input);
         }
 
         public async Task AddAsync(Geolocation geolocation)

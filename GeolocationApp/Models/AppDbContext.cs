@@ -18,7 +18,7 @@ namespace GeolocationApp.Models
             modelBuilder.Entity<Geolocation>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.HasIndex(e => e.IP).IsUnique();
+                entity.HasIndex(e => e.IPAddress).IsUnique();
                 entity.HasIndex(e => e.Url).IsUnique();
             });
         }

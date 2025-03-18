@@ -57,33 +57,27 @@ namespace GeolocationApp.ViewModels
         {
             new Geolocation
             {
-                IP = "8.8.8.8",
+                IPAddress = "8.8.8.8",
                 Url = "dns.google",
-                Continent = "North America",
                 Country = "United States",
-                Region = "California",
                 City = "Mountain View",
                 Latitude = 37.4056,
                 Longitude = -122.0775
             },
             new Geolocation
             {
-                IP = "104.16.249.249",
+                IPAddress = "104.16.249.249",
                 Url = "github.com",
-                Continent = "Europe",
                 Country = "Germany",
-                Region = "Hesse",
                 City = "Frankfurt",
                 Latitude = 50.1188,
                 Longitude = 8.6843
             },
             new Geolocation
             {
-                IP = "172.217.16.206",
+                IPAddress = "172.217.16.206",
                 Url = "google.com",
-                Continent = "Asia",
                 Country = "Japan",
-                Region = "Tokyo",
                 City = "Tokyo",
                 Latitude = 35.6895,
                 Longitude = 139.6917
