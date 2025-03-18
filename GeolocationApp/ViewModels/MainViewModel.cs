@@ -24,6 +24,9 @@ namespace GeolocationApp.ViewModels
         private Geolocation _selectedLocation;
 
         [ObservableProperty]
+        private Geolocation _selectedLocationFromDb;
+        
+        [ObservableProperty]
         private string _errorMessage;
         public MainViewModel(IIpStackService ipStackService, IGeolocationRepository repository)
         {
@@ -117,21 +120,11 @@ namespace GeolocationApp.ViewModels
         [RelayCommand]
         private async Task DeleteFromDatabase()
         {
-            if (SelectedLocation != null)
+            if (SelectedLocationFromDb != null)
             {
-                await _repository.DeleteAsync(SelectedLocation.Id);
-                Locations.Remove(SelectedLocation);
+                await _repository.DeleteAsync(SelectedLocationFromDb.Id);
+                Locations.Remove(SelectedLocationFromDb);
             }
         }
-
-        //[RelayCommand]
-        //private async Task SearchDatabase()
-        //{
-        //    if (!string.IsNullOrEmpty(Input))
-        //    {
-        //        var result = await _repository.GetByIpOrUrlAsync(Input);
-        //        // Handle search result
-        //    }
-        //}
     }
 }

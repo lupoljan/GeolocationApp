@@ -83,12 +83,28 @@
         <!-- Stored Locations List -->
         <DataGrid Grid.Row="2" 
                 ItemsSource="{Binding Locations}"
-                SelectedItem="{Binding SelectedLocation}"
+                SelectedItem="{Binding SelectedLocationFromDb}"
                 AutoGenerateColumns="False"
+                CanUserAddRows="False"
                 Margin="0,16"
                 Style="{StaticResource MaterialDesignDataGrid}"
-                HeadersVisibility="Column">
-
+                HeadersVisibility="Column"
+                SelectionMode="Single"
+                SelectionUnit="FullRow"
+                EnableRowVirtualization="True">
+            <!-- Row Style for Highlighting -->
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow" BasedOn="{StaticResource MaterialDesignDataGridRow}">
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource PrimaryHueLightBrush}"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryHueMidBrush}"/>
+                            <Setter Property="BorderThickness" Value="2"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+            
             <DataGrid.Columns>
                 <DataGridTextColumn Header="IP" Binding="{Binding IPAddress}" Width="*"/>
                 <DataGridTextColumn Header="Country" Binding="{Binding Country}" Width="*"/>
