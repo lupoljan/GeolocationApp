@@ -1,5 +1,8 @@
 ﻿using GeolocationApp.Models;
+using GeolocationApp.Repositories;
+using GeolocationApp.Repositories.Interfaces;
 using GeolocationApp.Services;
+using GeolocationApp.Services.Interfaces;
 using GeolocationApp.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +27,6 @@ namespace GeolocationApp
                 context.Database.EnsureCreated();
             }
 
-
             var services = new ServiceCollection();
             ConfigureServices(services);
             ServiceProvider = services.BuildServiceProvider();
@@ -39,8 +41,8 @@ namespace GeolocationApp
             // Add DbContext Factory
             services.AddDbContextFactory<AppDbContext>(options =>
                 options.UseSqlite("Data Source=geolocations.db"));
-            services.AddHttpClient<IpStackService>();
-            services.AddSingleton<GeolocationRepository>();
+            services.AddHttpClient<IIpStackService, IpStackService>();
+            services.AddScoped<IGeolocationRepository, GeolocationRepository>();
             services.AddTransient<MainViewModel>();
             services.AddSingleton<MainWindow>();
         }

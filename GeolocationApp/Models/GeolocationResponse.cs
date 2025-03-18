@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GeolocationApp.Services
+namespace GeolocationApp.Models
 {
     public class GeolocationResponse
     {

@@ -1,4 +1,5 @@
 ﻿using GeolocationApp.Models;
+using GeolocationApp.Services.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using System.Windows;
 
 namespace GeolocationApp.Services
 {
-    public class IpStackService
+    public class IpStackService : IIpStackService
     {
         private const string ApiKey = "84459c1c30ce263f3096fe5d1cc2693e";
         private const string BaseUrl = "http://api.ipstack.com/";

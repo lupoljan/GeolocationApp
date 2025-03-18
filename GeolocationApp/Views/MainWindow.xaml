@@ -10,107 +10,114 @@
         Height="600" 
         Width="800"
         FontFamily="Segoe UI"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        Style="{StaticResource MaterialDesignWindow}">
 
     <Grid Margin="16">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0 0 0 16">
-            <materialDesign:PackIcon Kind="Earth" Width="32" Height="32" Margin="0 0 8 0"/>
-            <TextBlock Text="GeoLocator" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" />
-        </StackPanel>
-
         <!-- Search Section -->
-        <materialDesign:Card Grid.Row="0" Margin="0 60 0 16" Padding="16">
+        <materialDesign:Card Grid.Row="0" Padding="16">
+            <StackPanel Orientation="Horizontal">
+                <TextBox Width="300" 
+                       materialDesign:HintAssist.Hint="Enter IP address or URL"
+                       Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                       Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Button Content="FETCH" 
+                      Command="{Binding FetchGeolocationCommand}"
+                      Style="{StaticResource MaterialDesignRaisedButton}"
+                      Margin="16,0,0,0"
+                      ToolTip="Get geolocation data"/>
+            </StackPanel>
+        </materialDesign:Card>
+
+        <!-- Fetched Data Display -->
+        <GroupBox Grid.Row="1" Header="Fetched Geolocation Data" Margin="0,16">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBox Grid.Column="0" 
-                       materialDesign:HintAssist.Hint="Enter IP address or URL"
-                       Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                       Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}"
-                       FontSize="16"
-                       Margin="0 0 8 0"/>
+                <!-- Left Column -->
+                <StackPanel Grid.Column="0" Margin="8">
+                    <TextBlock Text="{Binding SelectedLocation.IP}" 
+                             Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
+                    <TextBlock Text="{Binding SelectedLocation.Url}" 
+                             Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                             Foreground="Gray"/>
 
-                <Button Grid.Column="1" 
-                      Command="{Binding LookupCommand}"
-                      Style="{StaticResource MaterialDesignRaisedButton}"
-                      ToolTip="Lookup location">
-                    <StackPanel Orientation="Horizontal">
-                        <materialDesign:PackIcon Kind="Magnify" Margin="0 0 4 0"/>
-                        <TextBlock Text="Search"/>
+                    <StackPanel Margin="0,16,0,0">
+                        <TextBlock Text="{Binding SelectedLocation.Country}"
+                                 Style="{StaticResource MaterialDesignBody1TextBlock}"/>
+                        <TextBlock Text="{Binding SelectedLocation.Region}"
+                                 Style="{StaticResource MaterialDesignBody2TextBlock}"/>
+                        <TextBlock Text="{Binding SelectedLocation.City}"
+                                 Style="{StaticResource MaterialDesignBody2TextBlock}"/>
                     </StackPanel>
-                </Button>
+                </StackPanel>
+
+                <!-- Right Column -->
+                <StackPanel Grid.Column="1" Margin="8">
+                    <TextBlock Text="Coordinates" 
+                             Style="{StaticResource MaterialDesignSubtitle1TextBlock}"/>
+                    <TextBlock Margin="0,8,0,0"
+                             Text="{Binding SelectedLocation.Latitude, StringFormat='Latitude: {0:N4}'}"/>
+                    <TextBlock Text="{Binding SelectedLocation.Longitude, StringFormat='Longitude: {0:N4}'}"/>
+
+                    <Button Content="SAVE" 
+                          Command="{Binding SaveToDatabaseCommand}"
+                          Style="{StaticResource MaterialDesignRaisedButton}"
+                          Margin="0,16,0,0"
+                          HorizontalAlignment="Left"/>
+                </StackPanel>
             </Grid>
-        </materialDesign:Card>
+        </GroupBox>
 
-        <!-- Results List -->
-        <materialDesign:Card Grid.Row="1" Padding="0">
-            <ListView ItemsSource="{Binding Geolocations}" 
-                    SelectedItem="{Binding SelectedGeolocation}"
-                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                      BorderThickness="0" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,0,367,0">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <materialDesign:Card Margin="8" Padding="16" >
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+        <!-- Stored Locations List -->
+        <DataGrid Grid.Row="2" 
+                ItemsSource="{Binding Locations}"
+                SelectedItem="{Binding SelectedLocation}"
+                AutoGenerateColumns="False"
+                Margin="0,16"
+                Style="{StaticResource MaterialDesignDataGrid}"
+                HeadersVisibility="Column">
 
-                                <!-- Location Icon -->
-                                <materialDesign:PackIcon Grid.Column="0" 
-                                                       Kind="MapMarker" 
-                                                       Width="32" 
-                                                       Height="32" 
-                                                       Margin="0 0 16 0"/>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="IP" Binding="{Binding IPAddress}" Width="*"/>
+                <DataGridTextColumn Header="Country" Binding="{Binding Country}" Width="*"/>
+                <DataGridTextColumn Header="City" Binding="{Binding City}" Width="*"/>
+                <DataGridTemplateColumn Width="Auto">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button
+                                  Command="{Binding DataContext.DeleteFromDatabaseCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                  ToolTip="Delete selected"
+                                  Style="{StaticResource MaterialDesignFlatButton}">
+                                <materialDesign:PackIcon Kind="Delete" Width="24" Height="24"/>
+                            </Button>
 
-                                <!-- Location Details -->
-                                <StackPanel Grid.Column="1">
-                                    <TextBlock Text="{Binding IPAddress}" FontSize="16" FontWeight="Bold"/>
-                                    <TextBlock Text="{Binding Url}" FontSize="16" />
-                                    <TextBlock Text="{Binding City}" FontSize="14"/>
-                                    <StackPanel Orientation="Horizontal" Margin="0 4 0 0">
-                                        <materialDesign:PackIcon Kind="Earth" Width="16" Height="16" Margin="0 0 4 0"/>
-                                        <TextBlock Text="{Binding Country}" FontSize="12" Foreground="#666"/>
-                                    </StackPanel>
-                                </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
 
-                                <!-- Coordinates -->
-                                <StackPanel Grid.Column="2" HorizontalAlignment="Right">
-                                    <TextBlock Text="{Binding Latitude, StringFormat='Lat: {0:N4}'}" 
-                                               FontSize="12"
-                                               Foreground="#666"/>
-                                    <TextBlock Text="{Binding Longitude, StringFormat='Lon: {0:N4}'}" 
-                                               FontSize="12"
-                                               Foreground="#666"/>
-                                </StackPanel>
-                            </Grid>
-                        </materialDesign:Card>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </materialDesign:Card>
-
-        <!-- Delete Button -->
-        <Button Grid.Row="2" 
-              Command="{Binding DeleteCommand}"
-              Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
-              HorizontalAlignment="Right"
-              Margin="0 16 0 0"
-              ToolTip="Delete selected">
-            <!--Visibility="{Binding SelectedGeolocation, Converter={StaticResource NullToVisibilityConverter}}"-->
-            <materialDesign:PackIcon Kind="Delete" Width="24" Height="24"/>
-        </Button>
+        <!-- Status Bar -->
+        <StatusBar Grid.Row="3">
+            <TextBlock Text="{Binding Locations.Count, StringFormat='Total records: {0}'}"
+                     Margin="8,0"/>
+            <Separator/>
+            <TextBlock Text="{Binding ErrorMessage}"
+                     Foreground="Red"
+                     Margin="8,0"
+                     TextWrapping="Wrap"/>
+        </StatusBar>
     </Grid>
 </Window>

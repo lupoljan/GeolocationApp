@@ -1,36 +1,41 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GeolocationApp.Models;
+using GeolocationApp.Repositories;
+using GeolocationApp.Repositories.Interfaces;
 using GeolocationApp.Services;
+using GeolocationApp.Services.Interfaces;
 using System.Collections.ObjectModel;
 
 namespace GeolocationApp.ViewModels
 {
     public partial class MainViewModel : ObservableObject
     {
-        private readonly IpStackService _ipStackService;
-        private readonly GeolocationRepository _repository;
+        private readonly IIpStackService _ipStackService;
+        private readonly IGeolocationRepository _repository;
 
         [ObservableProperty]
-        private ObservableCollection<Geolocation> _geolocations = new();
+        private ObservableCollection<Geolocation> _locations = new();
 
         [ObservableProperty]
         private string _input;
 
         [ObservableProperty]
-        private Geolocation _selectedGeolocation;
+        private Geolocation _selectedLocation;
 
-        public MainViewModel(IpStackService ipStackService, GeolocationRepository repository)
+        [ObservableProperty]
+        private string _errorMessage;
+        public MainViewModel(IIpStackService ipStackService, IGeolocationRepository repository)
         {
             _ipStackService = ipStackService;
             _repository = repository;
-            LoadSampleGeolocations();
+            LoadLocations();
         }
 
-        private async void LoadGeolocations()
+        private async void LoadLocations()
         {
             var locations = await _repository.GetAllAsync();
-            Geolocations = new ObservableCollection<Geolocation>(locations);
+            Locations = new ObservableCollection<Geolocation>(locations);
         }
 
         private async void LoadSampleGeolocations()
@@ -48,9 +53,8 @@ namespace GeolocationApp.ViewModels
                 locations = await _repository.GetAllAsync();
             }
 
-            Geolocations = new ObservableCollection<Geolocation>(locations);
+            Locations = new ObservableCollection<Geolocation>(locations);
         }
-
         private List<Geolocation> GetSampleGeolocations()
         {
             return new List<Geolocation>
@@ -85,23 +89,49 @@ namespace GeolocationApp.ViewModels
         };
         }
 
-
         [RelayCommand]
-        private async Task LookupAsync()
+        private async Task FetchGeolocation()
         {
-            var geolocation = await _ipStackService.GetGeolocationAsync(Input);
-            await _repository.AddAsync(geolocation);
-            Geolocations.Add(geolocation);
-        }
-
-        [RelayCommand]
-        private async Task DeleteAsync()
-        {
-            if (SelectedGeolocation != null)
+            try
             {
-                await _repository.DeleteAsync(SelectedGeolocation.Id);
-                Geolocations.Remove(SelectedGeolocation);
+                ErrorMessage = string.Empty;
+                var result = await _ipStackService.GetGeolocationAsync(Input);
+                SelectedLocation = result;
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Error: {ex.Message}";
             }
         }
+
+        [RelayCommand]
+        private async Task SaveToDatabase()
+        {
+            if (SelectedLocation != null)
+            {
+                await _repository.AddAsync(SelectedLocation);
+                Locations.Add(SelectedLocation);
+            }
+        }
+
+        [RelayCommand]
+        private async Task DeleteFromDatabase()
+        {
+            if (SelectedLocation != null)
+            {
+                await _repository.DeleteAsync(SelectedLocation.Id);
+                Locations.Remove(SelectedLocation);
+            }
+        }
+
+        //[RelayCommand]
+        //private async Task SearchDatabase()
+        //{
+        //    if (!string.IsNullOrEmpty(Input))
+        //    {
+        //        var result = await _repository.GetByIpOrUrlAsync(Input);
+        //        // Handle search result
+        //    }
+        //}
     }
 }
