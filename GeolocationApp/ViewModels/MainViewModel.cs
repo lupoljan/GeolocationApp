@@ -34,14 +34,7 @@ namespace GeolocationApp.ViewModels
             _repository = repository;
             LoadLocations();
         }
-
         private async void LoadLocations()
-        {
-            var locations = await _repository.GetAllAsync();
-            Locations = new ObservableCollection<Geolocation>(locations);
-        }
-
-        private async void LoadSampleGeolocations()
         {
             var locations = await _repository.GetAllAsync();
 
