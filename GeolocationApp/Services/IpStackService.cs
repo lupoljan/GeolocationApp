@@ -16,19 +16,29 @@ namespace GeolocationApp.Services
 {
     public class IpStackService : IIpStackService
     {
-        private readonly string ApiKey = ConfigurationManager.AppSettings["IPStackApiKey"];
+        private readonly string _apiKey;
         private const string BaseUrl = "http://api.ipstack.com/";
         private readonly HttpClient _httpClient;
 
-        public IpStackService(HttpClient httpClient) => _httpClient = httpClient;
-
+        public IpStackService(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+            _apiKey = ConfigurationManager.AppSettings["IPStackApiKey"] ?? throw new InvalidOperationException("API key is missing in App.config");
+        }
         public async Task<Geolocation> GetGeolocationAsync(string input)
         {
             try
             {
                 string ipAddress = await ResolveIpAddressAsync(input);
-                var response = await _httpClient.GetStringAsync($"{BaseUrl}{ipAddress}?access_key={ApiKey}&hostname=1");
-                var data = JsonConvert.DeserializeObject<GeolocationResponse>(response);
+                var response = await _httpClient.GetAsync($"{BaseUrl}{ipAddress}?access_key={_apiKey}&hostname=1");
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new HttpRequestException($"Error fetching geolocation: {response.StatusCode}");
+                }
+
+                var responseData = await response.Content.ReadAsStringAsync();
+                var data = JsonConvert.DeserializeObject<GeolocationResponse>(responseData);
+
                 return new Geolocation
                 {
                     IPAddress = ipAddress,
@@ -41,7 +51,7 @@ namespace GeolocationApp.Services
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error fetching geolocation: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Console.WriteLine($"Error fetching geolocation: {ex.Message}");
                 return null;
             }
 
@@ -68,8 +78,7 @@ namespace GeolocationApp.Services
         {
             if (Uri.TryCreate(input, UriKind.Absolute, out uri))
             {
-                return uri.Scheme == Uri.UriSchemeHttp ||
-                       uri.Scheme == Uri.UriSchemeHttps;
+                return uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps;
             }
 
             // Try adding http:// prefix for URLs without scheme
