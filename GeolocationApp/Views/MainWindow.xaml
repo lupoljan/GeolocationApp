@@ -7,7 +7,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="GeoLocator" 
-        Height="600" 
+        Height="800" 
         Width="800"
         FontFamily="Segoe UI"
         WindowStartupLocation="CenterScreen"
@@ -17,71 +17,113 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Search Section -->
-        <materialDesign:Card Grid.Row="0" Padding="16">
-            <StackPanel Orientation="Horizontal">
-                <TextBox Width="300" 
-                       materialDesign:HintAssist.Hint="Enter IP address or URL"
-                       Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                       Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <Button Content="FETCH" 
-                      Command="{Binding FetchGeolocationCommand}"
-                      Style="{StaticResource MaterialDesignRaisedButton}"
-                      Margin="16,0,0,0"
-                      ToolTip="Get geolocation data"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="8">
+                <materialDesign:PackIcon Kind="MapMarker" Width="24" Height="24" Margin="0,0,8,0"/>
+            <TextBlock Text="Fetched Geolocation Data" FontSize="18" />
             </StackPanel>
-        </materialDesign:Card>
-
+        
         <!-- Fetched Data Display -->
-        <GroupBox Grid.Row="1" Header="Fetched Geolocation Data" Margin="0,16">
-            <Grid>
+        <materialDesign:Card Grid.Row="2" 
+                    Margin="0,16"
+                    Background="{DynamicResource PrimaryHueLightBrush}"
+                    Opacity="0.95">
+
+            <Grid Margin="8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Left Column -->
+                <!-- Left Column - Location Details -->
                 <StackPanel Grid.Column="0" Margin="8">
-                    <TextBlock Text="{Binding SelectedLocation.IP}" 
-                             Style="{StaticResource MaterialDesignHeadline6TextBlock}"/>
-                    <TextBlock Text="{Binding SelectedLocation.Url}" 
-                             Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
-                             Foreground="Gray"/>
-
-                    <StackPanel Margin="0,16,0,0">
-                        <TextBlock Text="{Binding SelectedLocation.Country}"
-                                 Style="{StaticResource MaterialDesignBody1TextBlock}"/>
-                        <TextBlock Text="{Binding SelectedLocation.Region}"
-                                 Style="{StaticResource MaterialDesignBody2TextBlock}"/>
-                        <TextBlock Text="{Binding SelectedLocation.City}"
-                                 Style="{StaticResource MaterialDesignBody2TextBlock}"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <materialDesign:PackIcon Kind="IpNetwork" Width="20" Height="20" Margin="0,0,8,0"/>
+                        <TextBlock Text="{Binding SelectedLocation.IPAddress}" 
+                         Style="{StaticResource MaterialDesignSubtitle1TextBlock}"/>
                     </StackPanel>
-                </StackPanel>
 
-                <!-- Right Column -->
-                <StackPanel Grid.Column="1" Margin="8">
-                    <TextBlock Text="Coordinates" 
-                             Style="{StaticResource MaterialDesignSubtitle1TextBlock}"/>
-                    <TextBlock Margin="0,8,0,0"
-                             Text="{Binding SelectedLocation.Latitude, StringFormat='Latitude: {0:N4}'}"/>
-                    <TextBlock Text="{Binding SelectedLocation.Longitude, StringFormat='Longitude: {0:N4}'}"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <materialDesign:PackIcon Kind="Web" Width="20" Height="20" Margin="0,0,8,0"/>
+                        <TextBlock Text="{Binding SelectedLocation.Url}" 
+                         Style="{StaticResource MaterialDesignBody2TextBlock}"
+                         Foreground="{DynamicResource MaterialDesignBody}"/>
+                    </StackPanel>
 
-                    <Button Content="SAVE" 
-                          Command="{Binding SaveToDatabaseCommand}"
-                          Style="{StaticResource MaterialDesignRaisedButton}"
-                          Margin="0,16,0,0"
-                          HorizontalAlignment="Left"/>
+                    <Separator Margin="0,8"/>
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Earth" Width="24" Height="24" Margin="0,0,8,0"/>
+                        <TextBlock Text="Location Details"
+                                   Style="{StaticResource MaterialDesignBody2TextBlock}"
+                                   Foreground="{DynamicResource MaterialDesignSecondaryText}"/>
+                    </StackPanel>
+                    <StackPanel >
+                        <StackPanel Orientation="Vertical" Margin="16,8">
+                            <TextBlock Text="{Binding SelectedLocation.City}"
+                             Style="{StaticResource MaterialDesignBody2TextBlock}"/>
+                            <TextBlock Text="{Binding SelectedLocation.Country}"
+                             Style="{StaticResource MaterialDesignBody1TextBlock}"
+                             FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <Separator Margin="0,8"/>
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="CrosshairsGps" Width="24" Height="24" Margin="0,0,8,0"/>
+                        <TextBlock Text="Coordinates" 
+                       Style="{StaticResource MaterialDesignBody2TextBlock}"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical" Margin="0">
+                        <TextBlock Text="{Binding SelectedLocation.Latitude, StringFormat='Latitude: {0:N4}°'}"
+                       Style="{StaticResource MaterialDesignBody2TextBlock}"/>
+                        <TextBlock Text="{Binding SelectedLocation.Longitude, StringFormat='Longitude: {0:N4}°'}"
+                       Style="{StaticResource MaterialDesignBody2TextBlock}"
+                       Margin="0,8,0,0"/>
+                    </StackPanel>
+                    <Button Command="{Binding SaveToDatabaseCommand}"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Margin="10"
+                    HorizontalAlignment="Right">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="ContentSave" Width="20" Height="20" Margin="0,0,8,0"/>
+                            <TextBlock Text="Save to Database"/>
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
+                <!-- Right Column - Coordinates -->
+                <StackPanel Grid.Column="2" Margin="10">
+                    <!-- Search Section -->
+                    <materialDesign:Card Grid.Row="0" Padding="16">
+                        <StackPanel Orientation="Vertical">
+                            <TextBox Width="300" 
+                       materialDesign:HintAssist.Hint="Enter IP address or URL"
+                       Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                       Text="{Binding Input, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <Button Command="{Binding FetchGeolocationCommand}"
+                      Style="{StaticResource MaterialDesignRaisedButton}"
+                      Margin="10"
+                      ToolTip="Get geolocation data">
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="GetApp" Width="20" Height="20" Margin="0,0,4,0"/>
+                                    <TextBlock Text="FETCH"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </materialDesign:Card>
+                </StackPanel>
+                
             </Grid>
-        </GroupBox>
+        </materialDesign:Card>
 
         <!-- Stored Locations List -->
-        <DataGrid Grid.Row="2" 
+        <DataGrid Grid.Row="3" 
                 ItemsSource="{Binding Locations}"
                 SelectedItem="{Binding SelectedLocationFromDb}"
                 AutoGenerateColumns="False"
@@ -107,26 +149,33 @@
             
             <DataGrid.Columns>
                 <DataGridTextColumn Header="IP" Binding="{Binding IPAddress}" Width="*"/>
-                <DataGridTextColumn Header="Country" Binding="{Binding Country}" Width="*"/>
+                <DataGridTextColumn Header="Url" Binding="{Binding Url}" Width="*"/>
                 <DataGridTextColumn Header="City" Binding="{Binding City}" Width="*"/>
-                <DataGridTemplateColumn Width="Auto">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button
-                                  Command="{Binding DataContext.DeleteFromDatabaseCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                  ToolTip="Delete selected"
-                                  Style="{StaticResource MaterialDesignFlatButton}">
-                                <materialDesign:PackIcon Kind="Delete" Width="24" Height="24"/>
-                            </Button>
-
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Country" Binding="{Binding Country}" Width="*"/>
+                <DataGridTextColumn Header="Latitude" Binding="{Binding Latitude, StringFormat=' {0:N4}°'}" Width="*" />
+                <DataGridTextColumn Header="Longitude" Binding="{Binding Longitude, StringFormat=' {0:N4}°'}" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
-
+        
+        <!-- Delete Button Row -->
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8">
+            <Button Command="{Binding DeleteFromDatabaseCommand}"
+                    ToolTip="Delete selected record"
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    Margin="0,0,8,0">
+                <Button.ContentTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Delete" Width="20" Height="20" Margin="0,0,4,0"/>
+                            <TextBlock Text="DELETE SELECTED"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </Button.ContentTemplate>
+            </Button>
+        </StackPanel>
+        
         <!-- Status Bar -->
-        <StatusBar Grid.Row="3">
+        <StatusBar Grid.Row="5">
             <TextBlock Text="{Binding Locations.Count, StringFormat='Total records: {0}'}"
                      Margin="8,0"/>
             <Separator/>
