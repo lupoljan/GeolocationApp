@@ -18,16 +18,23 @@ namespace GeolocationApp.ViewModels
         private ObservableCollection<Geolocation> _locations = new();
 
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(FetchGeolocationCommand))]
         private string _input;
 
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(SaveToDatabaseCommand))]
         private Geolocation _selectedLocation;
 
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(DeleteFromDatabaseCommand))]
         private Geolocation _selectedLocationFromDb;
         
         [ObservableProperty]
         private string _errorMessage;
+
+        private bool CanFetch => !string.IsNullOrWhiteSpace(Input);
+        private bool CanSave => SelectedLocation != null;
+        private bool CanDelete => SelectedLocationFromDb != null;
         public MainViewModel(IIpStackService ipStackService, IGeolocationRepository repository)
         {
             _ipStackService = ipStackService;
@@ -85,7 +92,7 @@ namespace GeolocationApp.ViewModels
         };
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanFetch))]
         private async Task FetchGeolocation()
         {
             try
@@ -100,23 +107,39 @@ namespace GeolocationApp.ViewModels
             }
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanSave))]
         private async Task SaveToDatabase()
         {
-            if (SelectedLocation != null)
+            try
             {
-                await _repository.AddAsync(SelectedLocation);
-                Locations.Add(SelectedLocation);
+                if (SelectedLocation != null)
+                {
+                    await _repository.AddAsync(SelectedLocation);
+                    Locations.Add(SelectedLocation);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Save error: {ex.Message}";
             }
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(CanDelete))]
         private async Task DeleteFromDatabase()
         {
-            if (SelectedLocationFromDb != null)
+            try
             {
-                await _repository.DeleteAsync(SelectedLocationFromDb.Id);
-                Locations.Remove(SelectedLocationFromDb);
+                if (SelectedLocationFromDb != null)
+                {
+                    await _repository.DeleteAsync(SelectedLocationFromDb.Id);
+                    Locations.Remove(SelectedLocationFromDb);
+                    SelectedLocationFromDb = null;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Delete error: {ex.Message}";
             }
         }
     }
