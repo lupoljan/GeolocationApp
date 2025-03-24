@@ -21,7 +21,12 @@ namespace GeolocationApp
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            using (var context = new AppDbContext())
+            // Create options manually for initial database creation
+            var options = new DbContextOptionsBuilder<AppDbContext>()
+                .UseSqlite("Data Source=geolocations.db")
+                .Options;
+
+            using (var context = new AppDbContext(options))
             {
                 // First create the database
                 context.Database.EnsureCreated();
